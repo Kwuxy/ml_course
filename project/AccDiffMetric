@@ -1,0 +1,16 @@
+import tensorflow as tf
+from tensorflow.python import keras
+
+file_writer = tf.contrib.summary.create_file_writer("/logs")
+file_writer.set_as_default()
+
+
+class AccDiffMetric(keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        if logs is None:
+            logs = {}
+
+        acc_diff = logs['val_acc'] - logs['acc']
+        logs['acc_diff'] = acc_diff
+        tf.summary.scalar('Accuracy_difference', tensor=acc_diff)
+        return acc_diff
